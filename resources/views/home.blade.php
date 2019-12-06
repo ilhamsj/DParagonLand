@@ -7,9 +7,17 @@
             <div class="card" id="profil">
                 <div class="card-header">Profile</div>
                 <div class="card-body">
+                    <form action="" id="avatar  ">
+                        <div class="form-group">
+                            <label for="">Avatar</label>
+                            <input type="file" class="form-control-file" name="avatar" id="avatar" placeholder="Avatar" aria-describedby="fileHelpId">
+                        </div>
+                    </form>
+                </div>
+                <div class="card-body">
                 </div>
                 <div class="card-footer">
-                    <a href="" data-toggle="modal" data-target="#modelId">Edit Akun</a>
+                    <a href="" id="modalEditAkun">Edit Akun</a>
                 </div>
             </div>
         </div>
@@ -28,9 +36,8 @@
                     </button>
             </div>
             <div class="modal-body">
-                <form method="POST" action="{{ route('register') }}">
+                <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data">
                 @csrf
-
                 <div class="form-group row">
                     <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Name') }}</label>
 
@@ -98,7 +105,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save</button>
+                <button type="button" class="btn btn-primary" id="editAkun">Save</button>
             </div>
         </div>
     </div>
@@ -107,21 +114,60 @@
 
 @push('scripts')
     <script>
-        var id = "{{ Auth::user()->id }}";
+
+        // view
+        $('nav').removeClass('fixed-top');
+        $('main').addClass('py-4');
+
+        // id user
+        var idUser = "{{ Auth::user()->id }}";
+        
+        // show user
         $.ajax({
             type: "GET",
-            url: "api/v1/user/"+id,
+            url: "api/v1/user/"+idUser,
             success: function (response) {
                 console.log(response);
                 $.map(response, function (val, key) {
-                    $('#profil > .card-body').append(key);
-                    $('#profil > .card-body').append('<h6>'+val+'</h6>');
-                    $('#profil > .card-body').append('<hr/>');
+                    $('#profil > .card-body').last().append(key);
+                    $('#profil > .card-body').last().append('<h6>'+val+'</h6>');
+                    $('#profil > .card-body').last().append('<hr/>');
                 });
             }
         });
 
-        $('nav').removeClass('fixed-top');
-        $('main').addClass('py-4');
+        $('#modalEditAkun').click(function (e) { 
+            e.preventDefault();
+
+            var modelEdit = $('#modelId').modal('show');
+
+            $.ajax({
+                type: "GET",
+                url: "api/v1/user/"+idUser,
+                success: function (response) {
+                    console.log(response);
+                    $.each(response, function (key, value) { 
+                        $(modelEdit).find('#'+key).val(value);
+                    });
+                }
+            });
+        });
+
+        // update
+        $('#modelId').find('#editAkun').click(function (e) { 
+            e.preventDefault();
+            var data = $('#modelId').find('form').serialize();
+
+            $.ajax({
+                type: "POST",
+                url: "{{ route('user.store') }}",
+                data: data,
+                success: function (response) {
+                    console.log(response);
+                }
+            });
+        });
+
+
     </script>
 @endpush
