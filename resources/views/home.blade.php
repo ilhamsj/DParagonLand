@@ -4,30 +4,124 @@
 <div class="container">
     <div class="row justify-content-center align-items-center" style="min-height: 100vh">
         <div class="col-md-8">
-            <div class="card">
+            <div class="card" id="profil">
                 <div class="card-header">Profile</div>
-
                 <div class="card-body">
-                    <img style="max-width:100px" src="https://images-na.ssl-images-amazon.com/images/I/8166xCVDGnL._SY355_.jpg" alt="" srcset="">
-                    <a href="">Ganti Foto</a>
                 </div>
-                <div class="card-body">
-                    Nama :
-                    <h3>{{ Auth::user()->name }}</h3>
-                    <hr>
-                    
-                    Email :
-                    <h3>{{ Auth::user()->email }}</h3>
-                    <hr>
-                    
-                    phone :
-                    <h3>{{ Auth::user()->phone }}</h3>
-                    <hr>
-
-                    <a href="">Ganti Password</a>
+                <div class="card-footer">
+                    <a href="" data-toggle="modal" data-target="#modelId">Edit Akun</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="modelId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{{ route('register') }}">
+                @csrf
+
+                <div class="form-group row">
+                    <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Name') }}</label>
+
+                    <div class="col-md-6">
+                        <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="name" autofocus>
+
+                        @error('name')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="email" class="col-md-4 col-form-label text-md-right">{{ __('E-Mail Address') }}</label>
+
+                    <div class="col-md-6">
+                        <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email">
+
+                        @error('email')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="phone" class="col-md-4 col-form-label text-md-right">Phone</label>
+
+                    <div class="col-md-6">
+                        <input id="phone" type="number" class="form-control @error('phone') is-invalid @enderror" name="phone" value="{{ old('phone') }}" required autocomplete="phone">
+
+                        @error('phone')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('Password') }}</label>
+
+                    <div class="col-md-6">
+                        <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
+
+                        @error('password')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="password-confirm" class="col-md-4 col-form-label text-md-right">{{ __('Confirm Password') }}</label>
+
+                    <div class="col-md-6">
+                        <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
+                    </div>
+                </div>
+            </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
+
+@push('scripts')
+    <script>
+        var id = "{{ Auth::user()->id }}";
+        $.ajax({
+            type: "GET",
+            url: "api/v1/user/"+id,
+            success: function (response) {
+                console.log(response);
+                $.map(response, function (val, key) {
+                    $('#profil > .card-body').append(key);
+                    $('#profil > .card-body').append('<h6>'+val+'</h6>');
+                    $('#profil > .card-body').append('<hr/>');
+                });
+            }
+        });
+
+        $('nav').removeClass('fixed-top');
+        $('main').addClass('py-4');
+    </script>
+@endpush
