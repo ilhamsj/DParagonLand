@@ -7,11 +7,13 @@
             <div class="card" id="profil">
                 <div class="card-header">Profile</div>
                 <div class="card-body">
-                    <form action="" id="avatar  ">
+                    <img class="rounded mb-4" style="max-width: 40%" style="" src="" alt="" srcset="">
+                    <form action="" id="formAvatar">
                         <div class="form-group">
-                            <label for="">Avatar</label>
                             <input type="file" class="form-control-file" name="avatar" id="avatar" placeholder="Avatar" aria-describedby="fileHelpId">
                         </div>
+                        <input type="text" name="id" value="{{ Auth::user()->id }}" hidden>
+                        <button type="submit">Upload</button>
                     </form>
                 </div>
                 <div class="card-body">
@@ -137,6 +139,10 @@
                         $('#profil > .card-body').last().append(key);
                         $('#profil > .card-body').last().append('<h6>'+val+'</h6>');
                         $('#profil > .card-body').last().append('<hr/>');
+                        if(key == 'avatar') {
+                            console.log(val);
+                            $('#profil').find('img').attr('src', 'images/'+val)
+                        }
                     });
                 }
             });
@@ -178,5 +184,24 @@
                 }
             });
         });
+
+        // image
+        $('#formAvatar').submit(function (e) { 
+            e.preventDefault();
+            $.ajax({
+                type: "POST",
+                url: "{{ route('avatar.store') }}",
+                data:  new FormData(this),
+                contentType: false,
+                cache: false,
+                processData:false,
+                success: function (response) {
+                    $('#profil > .card-body').last().remove();
+                    $('<div class="card-body"></div>').insertBefore('#profil > .card-footer');
+                    showUser(idUser);
+                }
+            });
+        });
+        
     </script>
 @endpush

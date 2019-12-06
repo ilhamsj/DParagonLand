@@ -19,3 +19,17 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::resource('v1/user', 'UserController');
+Route::post('avatar', function (Request $request) {
+
+    if($request->hasFile('avatar')) {
+
+        $user = User::find($request->id);
+        $user->avatar =  $request->file('avatar')->getClientOriginalName();
+        $user->save();
+
+        $request->file('avatar')->storeAs('', $request->file('avatar')->getClientOriginalName(), 'public_uploads');
+        return response()->json(env('APP_URL').'images/'.$request->file('avatar')->getClientOriginalName());
+    }
+
+    
+})->name('avatar.store');
