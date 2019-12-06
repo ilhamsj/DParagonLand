@@ -121,21 +121,29 @@
 
         // id user
         var idUser = "{{ Auth::user()->id }}";
+
+        // show
+        showUser(idUser)
         
         // show user
-        $.ajax({
-            type: "GET",
-            url: "api/v1/user/"+idUser,
-            success: function (response) {
-                console.log(response);
-                $.map(response, function (val, key) {
-                    $('#profil > .card-body').last().append(key);
-                    $('#profil > .card-body').last().append('<h6>'+val+'</h6>');
-                    $('#profil > .card-body').last().append('<hr/>');
-                });
-            }
-        });
+        function showUser(idUser) {
+            $('#profil > .card-body').last().append('');
 
+            $.ajax({
+                type: "GET",
+                url: "api/v1/user/"+idUser,
+                success: function (response) {
+                    $.map(response, function (val, key) {
+                        $('#profil > .card-body').last().append(key);
+                        $('#profil > .card-body').last().append('<h6>'+val+'</h6>');
+                        $('#profil > .card-body').last().append('<hr/>');
+                    });
+                }
+            });
+        }
+
+
+        // edit akun
         $('#modalEditAkun').click(function (e) { 
             e.preventDefault();
 
@@ -145,7 +153,6 @@
                 type: "GET",
                 url: "api/v1/user/"+idUser,
                 success: function (response) {
-                    console.log(response);
                     $.each(response, function (key, value) { 
                         $(modelEdit).find('#'+key).val(value);
                     });
@@ -159,15 +166,17 @@
             var data = $('#modelId').find('form').serialize();
 
             $.ajax({
-                type: "POST",
-                url: "{{ route('user.store') }}",
+                type: "PUT",
+                url: "api/v1/user/"+idUser,
                 data: data,
                 success: function (response) {
-                    console.log(response);
+                    $('#modelId').modal('hide');
+                    $('#modelId').trigger('reset');
+                    $('#profil > .card-body').last().remove();
+                    $('<div class="card-body"></div>').insertBefore('#profil > .card-footer');
+                    showUser(response);
                 }
             });
         });
-
-
     </script>
 @endpush
