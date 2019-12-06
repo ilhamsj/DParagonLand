@@ -9,7 +9,7 @@ pengguna dapat
 ## Tugas:
 * Buat sebuah fitur aplikasi (berupa REST API, simple dashboard, atau keduanya), menggunakan framework Laravel dengan fungsi utama:
 ### Pendaftaran
-#### Field​ ​utama​ ​yang​ ​diperlukan​:
+Field​ ​utama​ ​yang​ ​diperlukan​:  
 * email (harus unik)
 * nama
 * password (min 8 karakter)
