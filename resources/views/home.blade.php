@@ -136,12 +136,13 @@
                 url: "api/v1/user/"+idUser,
                 success: function (response) {
                     $.map(response, function (val, key) {
-                        $('#profil > .card-body').last().append(key);
-                        $('#profil > .card-body').last().append('<h6>'+val+'</h6>');
-                        $('#profil > .card-body').last().append('<hr/>');
                         if(key == 'avatar') {
                             console.log(val);
                             $('#profil').find('img').attr('src', 'images/'+val)
+                        } else {
+                            $('#profil > .card-body').last().append(key);
+                            $('#profil > .card-body').last().append('<h3>'+val+'</h6>');
+                            $('#profil > .card-body').last().append('<hr/>');
                         }
                     });
                 }
